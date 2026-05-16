@@ -200,6 +200,32 @@ label {
     transform: translateY(0);
 }
 
+.btn-accent {
+    background-color: var(--accent);
+    color: #0f172a;
+    font-weight: 600;
+    border: none;
+}
+
+.btn-accent:hover {
+    background-color: var(--accent-hover);
+    color: #0f172a;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+}
+
+.btn-outline-accent {
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    background: transparent;
+    font-weight: 500;
+}
+
+.btn-outline-accent:hover {
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--accent-hover);
+    border-color: var(--accent-hover);
+}
+
 /* Code Display */
 pre, .code-editor {
     background-color: #000 !important;

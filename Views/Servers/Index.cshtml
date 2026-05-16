@@ -4,118 +4,147 @@
     ViewData["Title"] = "Konfiguracja Serwerów";
 }
 
-<div class="d-flex justify-content-between align-items-end mb-4">
-    <div>
-        <h1 class="mb-1">Zarządzanie <span class="text-gradient">Serwerami</span></h1>
-        <p class="text-muted mb-0">Dodawaj i przełączaj się między klastrami Elasticsearch</p>
+<div class="container-fluid">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-6">
+            <h1 class="mb-1">Zarządzanie <span class="text-gradient">Serwerami</span></h1>
+            <p class="text-muted mb-0">Dodawaj i przełączaj się między klastrami Elasticsearch</p>
+        </div>
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+            <a href="/EsCheck" class="btn btn-outline-secondary btn-sm rounded-pill px-4">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:16px; margin-right:8px;"><path d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Powrót do Eksploratora
+            </a>
+        </div>
     </div>
-    <a href="/EsCheck" class="btn btn-outline-secondary btn-sm rounded-pill">Powrót do Eksploratora</a>
-</div>
 
-@if (!string.IsNullOrWhiteSpace(Model.Error))
-{
-    <div class="alert badge-error border-0 mb-4">
-        <strong>Błąd:</strong> @Model.Error
-    </div>
-}
+    @if (!string.IsNullOrWhiteSpace(Model.Error))
+    {
+        <div class="alert badge-error border-0 mb-4 shadow-sm">
+            <div class="d-flex align-items-center">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:20px; margin-right:12px;"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <span>@Model.Error</span>
+            </div>
+        </div>
+    }
 
-<div class="row g-4">
-    <!-- Lista Serwerów -->
-    <div class="col-lg-8">
-        <div class="card-glass h-100">
-            <h3 class="h5 mb-4 text-accent">Zdefiniowane Połączenia</h3>
-            <div class="table-responsive">
-                <table class="table table-dark table-hover border-secondary">
-                    <thead>
-                        <tr>
-                            <th class="border-secondary text-muted small">STATUS</th>
-                            <th class="border-secondary text-muted small">NAZWA</th>
-                            <th class="border-secondary text-muted small">URL</th>
-                            <th class="border-secondary text-muted small">AUTH</th>
-                            <th class="border-secondary text-muted small text-end">AKCJA</th>
-                        </tr>
-                    </thead>
-                    <tbody class="align-middle">
-                        @foreach (var server in Model.Servers)
-                        {
-                            <tr class="@(server.Id == Model.ActiveServerId ? "table-active" : "")">
-                                <td>
-                                    @if (server.Id == Model.ActiveServerId)
-                                    {
-                                        <span class="badge-status badge-success">AKTYWNY</span>
-                                    }
-                                </td>
-                                <td class="fw-bold">@server.Name</td>
-                                <td><code class="text-muted">@server.Url</code></td>
-                                <td>
-                                    @if (!string.IsNullOrWhiteSpace(server.ApiKey))
-                                    {
-                                        <span class="badge bg-secondary">API Key</span>
-                                    }
-                                    else if (!string.IsNullOrWhiteSpace(server.Username))
-                                    {
-                                        <span class="badge bg-secondary">Basic Auth</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted small">Brak</span>
-                                    }
-                                </td>
-                                <td class="text-end">
-                                    <form method="post" action="/Servers/Select">
-                                        <input type="hidden" name="serverId" value="@server.Id" />
-                                        <button type="submit" class="btn @(server.Id == Model.ActiveServerId ? "btn-light disabled" : "btn-outline-light") btn-sm rounded-pill">
-                                            @(server.Id == Model.ActiveServerId ? "Wybrany" : "Wybierz")
-                                        </button>
-                                    </form>
-                                </td>
+    <div class="row g-4">
+        <!-- Lista Serwerów -->
+        <div class="col-xl-8">
+            <div class="card-glass h-100 shadow-lg">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="h5 mb-0 text-accent">Zdefiniowane Połączenia</h3>
+                    <span class="badge bg-dark border border-secondary text-muted px-3 py-2 rounded-pill small">@Model.Servers.Count Klastrów</span>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover border-secondary align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="border-secondary text-muted small py-3">STATUS</th>
+                                <th class="border-secondary text-muted small py-3">KONFIGURACJA</th>
+                                <th class="border-secondary text-muted small py-3">TYP AUTH</th>
+                                <th class="border-secondary text-muted small py-3 text-end">AKCJA</th>
                             </tr>
-                        }
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach (var server in Model.Servers)
+                            {
+                                <tr class="@(server.Id == Model.ActiveServerId ? "table-active" : "")">
+                                    <td style="width: 120px;">
+                                        @if (server.Id == Model.ActiveServerId)
+                                        {
+                                            <span class="badge-status badge-success">AKTYWNY</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge-status bg-dark border border-secondary text-muted">NIEAKTYWNY</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold">@server.Name</div>
+                                        <code class="text-accent small opacity-75">@server.Url</code>
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrWhiteSpace(server.ApiKey))
+                                        {
+                                            <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 px-3">API Key</span>
+                                        }
+                                        else if (!string.IsNullOrWhiteSpace(server.Username))
+                                        {
+                                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3">Basic Auth</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">Brak zabezpieczeń</span>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        <form method="post" action="/Servers/Select">
+                                            <input type="hidden" name="serverId" value="@server.Id" />
+                                            <button type="submit" class="btn @(server.Id == Model.ActiveServerId ? "btn-accent disabled" : "btn-outline-accent") btn-sm rounded-pill px-4">
+                                                @(server.Id == Model.ActiveServerId ? "Aktualnie Wybrany" : "Połącz z Klastrem")
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dodaj Nowy -->
+        <div class="col-xl-4">
+            <div class="card-glass h-100 shadow-lg">
+                <h3 class="h5 mb-4 text-accent">Dodaj Nowy Serwer</h3>
+                <form method="post" action="/Servers/Add" class="row g-3">
+                    <div class="col-12">
+                        <label>ID Serwera</label>
+                        <input name="NewServer.Id" class="form-control" placeholder="np. prod-cluster" required />
+                    </div>
+
+                    <div class="col-12">
+                        <label>Przyjazna Nazwa</label>
+                        <input name="NewServer.Name" class="form-control" placeholder="np. Produkcja (Główna)" required />
+                    </div>
+
+                    <div class="col-12">
+                        <label>URL Klastra</label>
+                        <input name="NewServer.Url" class="form-control" placeholder="https://localhost:9200" required />
+                    </div>
+
+                    <div class="col-12 border-top border-secondary mt-4 pt-3">
+                        <span class="d-block mb-3 small text-muted text-uppercase fw-bold">Autoryzacja (opcjonalnie)</span>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label>Użytkownik</label>
+                                <input name="NewServer.Username" class="form-control" />
+                            </div>
+
+                            <div class="col-6">
+                                <label>Hasło</label>
+                                <input name="NewServer.Password" type="password" class="form-control" />
+                            </div>
+
+                            <div class="col-6">
+                                <label>API Key</label>
+                                <input name="NewServer.ApiKey" type="password" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-4 pt-2">
+                        <button type="submit" class="btn-premium w-100">
+                            Zapisz Serwer
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:18px; margin-left:8px;"><path d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-
-    <!-- Dodaj Nowy -->
-    <div class="col-lg-4">
-        <div class="card-glass h-100">
-            <h3 class="h5 mb-4 text-accent">Dodaj Nowy Serwer</h3>
-            <form method="post" action="/Servers/Add" class="row g-3">
-                <div class="col-12">
-                    <label>ID Serwera</label>
-                    <input name="NewServer.Id" class="form-control" placeholder="np. prod-cluster" required />
-                </div>
-
-                <div class="col-12">
-                    <label>Przyjazna Nazwa</label>
-                    <input name="NewServer.Name" class="form-control" placeholder="np. Produkcja (Główna)" required />
-                </div>
-
-                <div class="col-12">
-                    <label>URL Klastra</label>
-                    <input name="NewServer.Url" class="form-control" placeholder="https://localhost:9200" required />
-                </div>
-
-                <div class="col-12">
-                    <label>Użytkownik (opcjonalnie)</label>
-                    <input name="NewServer.Username" class="form-control" />
-                </div>
-
-                <div class="col-6">
-                    <label>Hasło</label>
-                    <input name="NewServer.Password" type="password" class="form-control" />
-                </div>
-
-                <div class="col-6">
-                    <label>API Key</label>
-                    <input name="NewServer.ApiKey" type="password" class="form-control" />
-                </div>
-
-                <div class="col-12 mt-4">
-                    <button type="submit" class="btn-premium w-100">Zapisz Serwer</button>
-                </div>
-            </form>
-        </div>
-    </div>
+</div>
+ </div>
 </div>

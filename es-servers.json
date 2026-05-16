@@ -7,6 +7,30 @@
       "Username": "",
       "Password": "",
       "ApiKey": "MmhTdUw1NEJScUZuQkFCcGVEdlo6V2I2YTlJbTZNZWh0QmRjSWVCa29jdw"
+    },
+	    {
+      "Id": "plvsr0126_v7",
+      "Name": "plvsr0126:9150 Elasticsearch",
+      "Url": "http://plvsr0126:9150",
+      "Username": "skrobart",
+      "Password": "R2026m05!Skr@R!",
+      "ApiKey": ""
+    },
+    {
+      "Id": "172.16.4.13",
+      "Name": "172.16.4.13 Elasticsearch",
+      "Url": "http://172.16.4.13:9179",
+      "Username": "elastic",
+      "Password": "QLUsuXkY3s1GaQjvWihT",
+      "ApiKey": ""
+    },
+    {
+      "Id": "plvsr0126_v9",
+      "Name": "plvsr0126:9160  Elasticsearch",
+      "Url": "http://plvsr0126:9160/",
+      "Username": "elastic",
+      "Password": "W2B80p4r438CrRTl4Q2z",
+      "ApiKey": null
     }
   ]
 }
