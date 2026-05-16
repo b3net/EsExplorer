@@ -1,0 +1,57 @@
+## Obyczaje i artefakty kompilacji (.NET / MSBuild)
+[Bb]in/
+[Oo]bj/
+[Log]/
+[Tt]est[Rr]esults/
+[Pp]ublish/
+
+# Pliki użytkownika i tymczasowe Visual Studio
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.vshost.exe
+*.vshost.exe.config
+*.vshost.exe.manifest
+.vs/
+
+## JetBrains Rider
+.idea/
+*.sln.DotSettings.user
+
+## Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/
+
+## Zarządzanie pakietami (NuGet)
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.fragment.lock.json
+
+## Dane poufne i konfiguracja lokalna
+# Trzymaj sekrety poza repozytorium (User Secrets są domyślnie w bezpiecznym folderze systemowym, 
+# ale na wypadek, gdybyś używał plików lokalnych):
+secrets.json
+.microsoft/usersecrets/
+
+# Jeśli chcesz ignorować lokalne ustawienia aplikacji z hasłami/connection stringami, 
+# odkomentuj poniższą linię (pamiętaj, aby zachować podstawowe appsettings.json):
+# appsettings.Development.json
+
+## Frontend i pakiety klienckie (NPM / LibMan)
+node_modules/
+/wwwroot/lib/
+.sass-cache/
+.bower_components/
+
+## Systemowe śmieci
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+*.lnk
