@@ -1,0 +1,12 @@
+{
+  "mappings": {
+    "properties": {
+      "timestamp": { "type": "date" },
+      "level": { "type": "keyword" },
+      "message": { "type": "text" },
+      "service": { "type": "keyword" },
+      "ip": { "type": "ip" },
+      "response_time": { "type": "integer" }
+    }
+  }
+}

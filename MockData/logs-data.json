@@ -1,0 +1,20 @@
+{ "index" : { "_index" : "logs" } }
+{ "timestamp": "2024-05-16T10:00:00Z", "level": "INFO", "message": "User login successful", "service": "auth-service", "ip": "192.168.1.1", "response_time": 45 }
+{ "index" : { "_index" : "logs" } }
+{ "timestamp": "2024-05-16T10:01:05Z", "level": "ERROR", "message": "Database connection timeout", "service": "db-service", "ip": "10.0.0.5", "response_time": 5000 }
+{ "index" : { "_index" : "logs" } }
+{ "timestamp": "2024-05-16T10:02:15Z", "level": "WARN", "message": "High memory usage detected", "service": "api-gateway", "ip": "192.168.1.10", "response_time": 120 }
+{ "index" : { "_index" : "logs" } }
+{ "timestamp": "2024-05-16T10:03:00Z", "level": "INFO", "message": "Product search initiated", "service": "search-service", "ip": "172.16.0.1", "response_time": 30 }
+{ "index" : { "_index" : "logs" } }
+{ "timestamp": "2024-05-16T10:04:45Z", "level": "INFO", "message": "Order processed", "service": "order-service", "ip": "192.168.1.5", "response_time": 250 }
+{ "index" : { "_index" : "logs" } }
+{ "timestamp": "2024-05-16T10:05:10Z", "level": "ERROR", "message": "Payment gateway unreachable", "service": "payment-service", "ip": "192.168.1.5", "response_time": 3500 }
+{ "index" : { "_index" : "logs" } }
+{ "timestamp": "2024-05-16T10:06:00Z", "level": "DEBUG", "message": "Cache hit for product 123", "service": "search-service", "ip": "172.16.0.1", "response_time": 5 }
+{ "index" : { "_index" : "logs" } }
+{ "timestamp": "2024-05-16T10:07:30Z", "level": "INFO", "message": "New user registered", "service": "auth-service", "ip": "85.20.10.5", "response_time": 60 }
+{ "index" : { "_index" : "logs" } }
+{ "timestamp": "2024-05-16T10:08:20Z", "level": "WARN", "message": "Slow query detected", "service": "db-service", "ip": "10.0.0.5", "response_time": 1200 }
+{ "index" : { "_index" : "logs" } }
+{ "timestamp": "2024-05-16T10:09:15Z", "level": "INFO", "message": "Health check passed", "service": "monitor", "ip": "127.0.0.1", "response_time": 10 }

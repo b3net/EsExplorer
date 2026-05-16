@@ -1,0 +1,80 @@
+{ "index" : { "_id" : "1" } }
+{ "name": "Laptop Pro 16", "description": "Powerful laptop for developers", "category": "Electronics", "catalogIndex": "EL-101X", "price": 8999.99, "stock": 15, "created_at": "2024-01-10", "tags": ["tech", "work", "portable"] }
+{ "index" : { "_id" : "2" } }
+{ "name": "Monitor 4K Ultra", "description": "32 inch 4k monitor", "category": "Electronics", "catalogIndex": "EL-202A", "price": 2499.00, "stock": 20, "created_at": "2024-02-15", "tags": ["display", "4k"] }
+{ "index" : { "_id" : "3" } }
+{ "name": "Wireless Mouse", "description": "Ergonomic wireless mouse", "category": "Accessories", "catalogIndex": "AC-303B", "price": 129.50, "stock": 100, "created_at": "2024-03-01", "tags": ["peripheral", "wireless"] }
+{ "index" : { "_id" : "4" } }
+{ "name": "Mechanical Keyboard", "description": "RGB Mechanical keyboard with blue switches", "category": "Accessories", "catalogIndex": "AC-404C", "price": 450.00, "stock": 45, "created_at": "2024-03-05", "tags": ["gaming", "keyboard"] }
+{ "index" : { "_id" : "5" } }
+{ "name": "Coffee Maker", "description": "Automatic espresso machine", "category": "Home", "catalogIndex": "HO-505D", "price": 1200.00, "stock": 8, "created_at": "2024-03-20", "tags": ["kitchen", "coffee"] }
+{ "index" : { "_id" : "6" } }
+{ "name": "Smart Watch", "description": "Fitness tracker and smart watch", "category": "Electronics", "catalogIndex": "EL-606E", "price": 899.00, "stock": 60, "created_at": "2024-04-01", "tags": ["wearable", "fitness"] }
+{ "index" : { "_id" : "7" } }
+{ "name": "Running Shoes", "description": "Lightweight running shoes", "category": "Apparel", "catalogIndex": "AP-707F", "price": 349.99, "stock": 120, "created_at": "2024-04-10", "tags": ["sports", "shoes"] }
+{ "index" : { "_id" : "8" } }
+{ "name": "Backpack", "description": "Waterproof travel backpack", "category": "Apparel", "catalogIndex": "AP-808G", "price": 199.00, "stock": 35, "created_at": "2024-04-12", "tags": ["travel", "bag"] }
+{ "index" : { "_id" : "9" } }
+{ "name": "Desk Lamp", "description": "LED desk lamp with wireless charging", "category": "Home", "catalogIndex": "HO-909H", "price": 150.00, "stock": 50, "created_at": "2024-04-15", "tags": ["lighting", "office"] }
+{ "index" : { "_id" : "10" } }
+{ "name": "Headphones", "description": "Noise cancelling over-ear headphones", "category": "Electronics", "catalogIndex": "EL-110I", "price": 1299.00, "stock": 25, "created_at": "2024-04-18", "tags": ["audio", "music"] }
+{ "index" : { "_id" : "11" } }
+{ "name": "Tablet Air 10", "description": "Thin and light tablet", "category": "Electronics", "catalogIndex": "EL-111J", "price": 3200.00, "stock": 30, "created_at": "2024-04-20", "tags": ["tech", "tablet"] }
+{ "index" : { "_id" : "12" } }
+{ "name": "Bluetooth Speaker", "description": "Waterproof portable speaker", "category": "Accessories", "catalogIndex": "AC-112K", "price": 250.00, "stock": 80, "created_at": "2024-04-22", "tags": ["audio", "wireless"] }
+{ "index" : { "_id" : "13" } }
+{ "name": "External Hard Drive", "description": "2TB USB-C external storage", "category": "Accessories", "catalogIndex": "AC-113L", "price": 350.00, "stock": 150, "created_at": "2024-04-25", "tags": ["storage", "tech"] }
+{ "index" : { "_id" : "14" } }
+{ "name": "Yoga Mat", "description": "Non-slip yoga mat", "category": "Home", "catalogIndex": "HO-114M", "price": 89.00, "stock": 200, "created_at": "2024-04-28", "tags": ["fitness", "yoga"] }
+{ "index" : { "_id" : "15" } }
+{ "name": "T-Shirt Cotton", "description": "Premium 100% cotton t-shirt", "category": "Apparel", "catalogIndex": "AP-115N", "price": 59.00, "stock": 500, "created_at": "2024-05-01", "tags": ["clothing", "basics"] }
+{ "index" : { "_id" : "16" } }
+{ "name": "Science Fiction Novel", "description": "Space adventure book", "category": "Books", "catalogIndex": "BO-116O", "price": 45.00, "stock": 100, "created_at": "2024-05-03", "tags": ["reading", "scifi"] }
+{ "index" : { "_id" : "17" } }
+{ "name": "Cooking Book", "description": "Gourmet recipes for home", "category": "Books", "catalogIndex": "BO-117P", "price": 85.00, "stock": 50, "created_at": "2024-05-05", "tags": ["reading", "cooking"] }
+{ "index" : { "_id" : "18" } }
+{ "name": "Graphics Software", "description": "Vector drawing tool", "category": "Software", "catalogIndex": "SO-118Q", "price": 1500.00, "stock": 999, "created_at": "2024-05-07", "tags": ["design", "tools"] }
+{ "index" : { "_id" : "19" } }
+{ "name": "Antivirus Pro", "description": "Complete security suite", "category": "Software", "catalogIndex": "SO-119R", "price": 199.00, "stock": 999, "created_at": "2024-05-10", "tags": ["security", "tech"] }
+{ "index" : { "_id" : "20" } }
+{ "name": "Digital Camera", "description": "Mirrorless digital camera", "category": "Electronics", "catalogIndex": "EL-120S", "price": 5400.00, "stock": 12, "created_at": "2024-05-12", "tags": ["photo", "tech"] }
+{ "index" : { "_id" : "21" } }
+{ "name": "Tripod Stand", "description": "Professional camera tripod", "category": "Accessories", "catalogIndex": "AC-121T", "price": 299.00, "stock": 25, "created_at": "2024-05-14", "tags": ["photo", "gear"] }
+{ "index" : { "_id" : "22" } }
+{ "name": "Leather Wallet", "description": "Handmade leather wallet", "category": "Apparel", "catalogIndex": "AP-122U", "price": 149.00, "stock": 60, "created_at": "2024-05-16", "tags": ["accessories", "luxury"] }
+{ "index" : { "_id" : "23" } }
+{ "name": "Desk Chair", "description": "Ergonomic office chair", "category": "Home", "catalogIndex": "HO-123V", "price": 950.00, "stock": 18, "created_at": "2024-05-18", "tags": ["furniture", "office"] }
+{ "index" : { "_id" : "24" } }
+{ "name": "Wall Clock", "description": "Minimalist wall clock", "category": "Home", "catalogIndex": "HO-124W", "price": 75.00, "stock": 40, "created_at": "2024-05-20", "tags": ["decor", "home"] }
+{ "index" : { "_id" : "25" } }
+{ "name": "Electric Kettle", "description": "Rapid boil electric kettle", "category": "Home", "catalogIndex": "HO-125X", "price": 180.00, "stock": 32, "created_at": "2024-05-22", "tags": ["kitchen", "appliances"] }
+{ "index" : { "_id" : "26" } }
+{ "name": "Python for Beginners", "description": "Complete guide to Python programming", "category": "Books", "catalogIndex": "BO-126Y", "price": 120.00, "stock": 85, "created_at": "2024-05-24", "tags": ["learning", "coding"] }
+{ "index" : { "_id" : "27" } }
+{ "name": "Wireless Router", "description": "High-speed Wi-Fi 6 router", "category": "Electronics", "catalogIndex": "EL-127Z", "price": 650.00, "stock": 28, "created_at": "2024-05-26", "tags": ["networking", "tech"] }
+{ "index" : { "_id" : "28" } }
+{ "name": "Dumbbells Set", "description": "Adjustable dumbbells set", "category": "Home", "catalogIndex": "HO-128A", "price": 499.00, "stock": 15, "created_at": "2024-05-28", "tags": ["fitness", "gym"] }
+{ "index" : { "_id" : "29" } }
+{ "name": "Smartphone Pro", "description": "Latest flagship smartphone", "category": "Electronics", "catalogIndex": "EL-129B", "price": 4500.00, "stock": 50, "created_at": "2024-05-30", "tags": ["mobile", "tech"] }
+{ "index" : { "_id" : "30" } }
+{ "name": "Winter Jacket", "description": "Heavy winter down jacket", "category": "Apparel", "catalogIndex": "AP-130C", "price": 799.00, "stock": 22, "created_at": "2024-06-01", "tags": ["clothing", "winter"] }
+{ "index" : { "_id" : "31" } }
+{ "name": "Video Editing Suite", "description": "Professional video editor", "category": "Software", "catalogIndex": "SO-131D", "price": 2800.00, "stock": 999, "created_at": "2024-06-03", "tags": ["video", "creation"] }
+{ "index" : { "_id" : "32" } }
+{ "name": "History of Art", "description": "Comprehensive art history book", "category": "Books", "catalogIndex": "BO-132E", "price": 140.00, "stock": 15, "created_at": "2024-06-05", "tags": ["reading", "art"] }
+{ "index" : { "_id" : "33" } }
+{ "name": "Humidifier", "description": "Ultrasonic cool mist humidifier", "category": "Home", "catalogIndex": "HO-133F", "price": 220.00, "stock": 45, "created_at": "2024-06-07", "tags": ["health", "comfort"] }
+{ "index" : { "_id" : "34" } }
+{ "name": "Gaming Controller", "description": "Wireless controller for PC/Console", "category": "Accessories", "catalogIndex": "AC-134G", "price": 280.00, "stock": 65, "created_at": "2024-06-10", "tags": ["gaming", "wireless"] }
+{ "index" : { "_id" : "35" } }
+{ "name": "Sun Glasses", "description": "Polarized stylish sunglasses", "category": "Apparel", "catalogIndex": "AP-135H", "price": 450.00, "stock": 30, "created_at": "2024-06-12", "tags": ["summer", "fashion"] }
+{ "index" : { "_id" : "36" } }
+{ "name": "Electric Guitar", "description": "Classic solid-body electric guitar", "category": "Home", "catalogIndex": "HO-136I", "price": 2400.00, "stock": 5, "created_at": "2024-06-14", "tags": ["music", "instrument"] }
+{ "index" : { "_id" : "37" } }
+{ "name": "Music Production Software", "description": "Digital audio workstation", "category": "Software", "catalogIndex": "SO-137J", "price": 1800.00, "stock": 999, "created_at": "2024-06-16", "tags": ["audio", "music"] }
+{ "index" : { "_id" : "38" } }
+{ "name": "Canvas Shoes", "description": "Casual canvas sneakers", "category": "Apparel", "catalogIndex": "AP-138K", "price": 120.00, "stock": 150, "created_at": "2024-06-18", "tags": ["clothing", "shoes"] }
+{ "index" : { "_id" : "39" } }
+{ "name": "Webcam HD", "description": "1080p high definition webcam", "category": "Electronics", "catalogIndex": "EL-139L", "price": 320.00, "stock": 90, "created_at": "2024-06-20", "tags": ["video", "tech"] }
+{ "index" : { "_id" : "40" } }
+{ "name": "Microphone Kit", "description": "USB condenser microphone with boom arm", "category": "Accessories", "catalogIndex": "AC-140M", "price": 480.00, "stock": 25, "created_at": "2024-06-22", "tags": ["audio", "streaming"] }

@@ -1,0 +1,63 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "analysis": {
+      "analyzer": {
+        "edge_ngram_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": ["lowercase", "edge_ngram_filter"]
+        },
+        "edge_ngram_search_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": ["lowercase"]
+        }
+      },
+      "filter": {
+        "edge_ngram_filter": {
+          "type": "edge_ngram",
+          "min_gram": 2,
+          "max_gram": 20
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "name": {
+        "type": "text",
+        "analyzer": "edge_ngram_analyzer",
+        "search_analyzer": "edge_ngram_search_analyzer",
+        "fields": {
+          "keyword": { "type": "keyword" }
+        }
+      },
+      "description": {
+        "type": "text",
+        "analyzer": "edge_ngram_analyzer",
+        "search_analyzer": "edge_ngram_search_analyzer"
+      },
+      "category": {
+        "type": "keyword",
+        "fields": { "text": { "type": "text" } }
+      },
+      "catalogIndex": {
+        "type": "keyword",
+        "fields": {
+          "text": { "type": "text" },
+          "ngram": {
+            "type": "text",
+            "analyzer": "edge_ngram_analyzer",
+            "search_analyzer": "edge_ngram_search_analyzer"
+          }
+        }
+      },
+      "price": { "type": "float" },
+      "stock": { "type": "integer" },
+      "created_at": { "type": "date" },
+      "tags": { "type": "keyword" }
+    }
+  }
+}

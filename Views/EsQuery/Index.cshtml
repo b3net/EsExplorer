@@ -1,0 +1,710 @@
+@model EsCheckWeb.Models.EsQueryViewModel
+
+@{
+    ViewData["Title"] = "Zapytania Elasticsearch";
+}
+
+@section Styles {
+    <style>
+        .editor-container {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            background: #1e1e1e;
+        }
+        .history-item {
+            cursor: pointer;
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s;
+            font-size: 0.8rem;
+        }
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .history-item .method-badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        
+        /* Modal Glass Effect */
+        .modal-content {
+            background: rgba(30, 41, 59, 0.9) !important;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+        }
+        .modal-header { border-bottom: 1px solid var(--border); }
+        .modal-footer { border-top: 1px solid var(--border); }
+
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+            border-width: 0.2em;
+        }
+        .d-none { display: none !important; }
+
+        /* Tabs Styling - Glass Pills */
+        .nav-tabs {
+            border: none !important;
+            gap: 8px;
+        }
+        .nav-tabs .nav-link {
+            border: 1px solid var(--glass-border) !important;
+            color: var(--text-muted) !important;
+            font-weight: 500;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+            border-radius: 50px !important;
+            padding: 6px 16px !important;
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .nav-tabs .nav-link:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent) !important;
+        }
+        .nav-tabs .nav-link.active {
+            background: rgba(56, 189, 248, 0.1) !important;
+            color: var(--accent) !important;
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+        .nav-tabs .nav-link.active::after { display: none; }
+
+        /* Force Flex on active tab panes */
+        .tab-content > .tab-pane.active {
+            display: flex !important;
+            flex-direction: column;
+            height: 100%;
+        }
+        .editor-container {
+            flex: 1;
+            min-height: 0;
+            width: 100%;
+        }
+    </style>
+}
+
+<div class="d-flex justify-content-between align-items-end mb-3">
+    <div>
+        <h1 class="mb-0"><span class="text-gradient">Eksplorator</span> Zapytań</h1>
+        <p class="text-muted small mb-0">Wykonuj zaawansowane zapytania do klastra Elasticsearch</p>
+    </div>
+    <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-info btn-sm rounded-pill" data-bs-toggle="offcanvas" data-bs-target="#historyOffcanvas">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="me-1"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            Historia
+        </button>
+        <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill" data-bs-toggle="offcanvas" data-bs-target="#indicesOffcanvas">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="me-1"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            Indeksy
+        </button>
+        <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill" data-bs-toggle="offcanvas" data-bs-target="#serversOffcanvas">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="me-1"><path d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path></svg>
+            Serwery
+        </button>
+    </div>
+</div>
+
+<div id="errorAlert" class="alert badge-error mb-3 border-0" style="display:none;">
+    <strong class="d-block mb-1">Wystąpił błąd:</strong>
+    <span id="errorMessage"></span>
+</div>
+
+<form id="queryForm" class="flex-grow-1 d-flex flex-column overflow-hidden">
+    <div class="query-grid flex-grow-1" style="height: calc(100vh - 150px); min-height: 0;">
+        <!-- Lewa Kolumna: Konfiguracja -->
+        <div class="card-glass h-100 d-flex flex-column overflow-hidden">
+            <h3 class="h5 mb-4 text-accent flex-shrink-0">Konfiguracja</h3>
+            
+            <div class="flex-grow-1 overflow-auto pe-2" style="min-height: 0;">
+                <div class="row g-3">
+                    <div class="col-md-2">
+                        <label>Metoda</label>
+                        <select name="HttpMethod" id="selectMethod" class="form-select form-select-sm">
+                            <option value="GET" selected="@(Model.HttpMethod == "GET")">GET</option>
+                            <option value="POST" selected="@(Model.HttpMethod == "POST")">POST</option>
+                            <option value="PUT" selected="@(Model.HttpMethod == "PUT")">PUT</option>
+                            <option value="DELETE" selected="@(Model.HttpMethod == "DELETE")">DELETE</option>
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <label>Indeks</label>
+                        <div class="input-group">
+                            <input name="SelectedIndex" id="selectIndex" class="form-control form-control-sm" list="indicesList" value="@Model.SelectedIndex" />
+                            <datalist id="indicesList">
+                                @foreach (var index in Model.Indices) { <option value="@index">@index</option> }
+                            </datalist>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <label>Endpoint</label>
+                        <input name="Endpoint" id="inputEndpoint" value="@Model.Endpoint" class="form-control form-control-sm" placeholder="/_search" />
+                    </div>
+                    <div class="col-12 d-flex flex-column" style="height: 400px;">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="mb-0">Body JSON</label>
+                            <button type="button" class="btn btn-link btn-sm text-accent text-decoration-none p-0" onclick="formatJson()">Format</button>
+                        </div>
+                        <div id="monacoInput" class="editor-container flex-grow-1"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-top border-secondary flex-shrink-0">
+                <button type="button" id="submitBtn" class="btn-premium w-100" onclick="handleQuerySubmit()">
+                    <span id="btnText">WYKONAJ ZAPYTANIE</span>
+                    <span id="btnSpinner" class="spinner-border spinner-border-sm ms-2" style="display:none;"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Prawa Kolumna: Wynik i Kod -->
+        <div class="card-glass h-100 d-flex flex-column overflow-hidden">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-shrink-0">
+                <ul class="nav nav-tabs border-0" id="resultTabs" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active py-2 px-3 small border-0 bg-transparent text-accent" 
+                                id="json-tab" data-bs-toggle="tab" data-bs-target="#json-pane" type="button">
+                            WYNIK JSON
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link py-2 px-3 small border-0 bg-transparent text-accent opacity-50" 
+                                id="code-tab" data-bs-toggle="tab" data-bs-target="#code-pane" type="button" onclick="generateCSharpCode()">
+                            KOD C# (.NET)
+                        </button>
+                    </li>
+                </ul>
+                <button type="button" id="copyBtn" class="btn btn-outline-light btn-sm rounded-pill" onclick="copyActiveContent()">Kopiuj</button>
+            </div>
+
+            <div class="tab-content flex-grow-1 d-flex flex-column overflow-hidden h-100" id="resultTabsContent">
+                <!-- Tab: Wynik JSON -->
+                <div class="tab-pane show active h-100" id="json-pane" role="tabpanel">
+                    <div id="resultMeta" class="mb-2 p-3 rounded bg-dark border border-secondary flex-shrink-0" style="display:none;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span id="resultStatus" class="badge-status"></span>
+                            <code id="resultUrl" class="text-muted small truncate ms-3"></code>
+                        </div>
+                    </div>
+                    <div id="monacoResult" class="editor-container flex-grow-1" style="display:none;"></div>
+                    <div id="emptyResult" class="d-flex flex-column align-items-center justify-content-center h-100 text-center opacity-50">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" class="mb-2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                        <p class="small">Wykonaj zapytanie, aby zobaczyć wynik</p>
+                    </div>
+                </div>
+                <!-- Tab: Kod C# -->
+                <div class="tab-pane h-100" id="code-pane" role="tabpanel">
+                    <div id="monacoCode" class="editor-container flex-grow-1"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Modal Kodu C# -->
+<div class="modal fade" id="codeModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content text-white">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title text-accent d-flex align-items-center">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="me-2"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                    Wygenerowany kod .NET (SDK 9.x)
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body py-4">
+                <div class="mb-3 d-flex justify-content-between align-items-center">
+                    <p class="small text-muted mb-0">Kod przygotowany dla klienta <code>ElasticsearchClient</code>:</p>
+                    <button class="btn btn-sm btn-outline-info rounded-pill" onclick="copyCode()">Kopiuj kod</button>
+                </div>
+                <div id="monacoCode" class="editor-container" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Potwierdzenia -->
+<div class="modal fade" id="confirmModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-white">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title text-warning d-flex align-items-center">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="me-2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 17c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    Potwierdź operację
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body py-4">
+                <p class="mb-2">Wykryto operację, która może zmienić lub usunąć dane:</p>
+                <div class="p-3 bg-dark rounded border border-secondary mb-3">
+                    <span id="confirmOperationInfo" class="font-monospace text-accent small"></span>
+                </div>
+                <p class="small text-muted mb-0">Czy na pewno chcesz kontynuować?</p>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-outline-light rounded-pill px-4" data-bs-dismiss="modal">Anuluj</button>
+                <button type="button" class="btn btn-warning rounded-pill px-4 text-dark fw-bold" onclick="executeFinalSubmit()">Wykonaj teraz</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Historia Offcanvas -->
+<div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="historyOffcanvas" style="background: var(--bg-main);">
+    <div class="offcanvas-header border-bottom border-secondary">
+        <h5 class="offcanvas-title text-accent">Historia Zapytań</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body p-0" id="historyList">
+        <div class="p-4 text-center text-muted small">Brak historii zapytań</div>
+    </div>
+    <div class="p-3 border-top border-secondary">
+        <button class="btn btn-outline-danger btn-sm w-100 rounded-pill" onclick="clearHistory()">Wyczyść historię</button>
+    </div>
+</div>
+
+<!-- Indeksy Offcanvas -->
+<div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="indicesOffcanvas" style="background: var(--bg-main);">
+    <div class="offcanvas-header border-bottom border-secondary">
+        <h5 class="offcanvas-title text-accent">Twoje Indeksy</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+        @if (Model.Indices != null && Model.Indices.Any())
+        {
+            foreach (var index in Model.Indices)
+            {
+                <div class="history-item d-flex align-items-center" onclick="setIndex('@index')">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="me-3 opacity-50"><path d="M4 7v10c0 1.1.9 2 2 2h12a2 2 0 002-2V7M4 7c0-1.1.9-2 2-2h12a2 2 0 012 2M4 7h16M10 11h4"></path></svg>
+                    <span>@index</span>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="p-4 text-center text-muted small">Nie znaleziono indeksów</div>
+        }
+    </div>
+</div>
+
+<!-- Serwery Offcanvas -->
+<div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="serversOffcanvas" style="background: var(--bg-main);">
+    <div class="offcanvas-header border-bottom border-secondary">
+        <h5 class="offcanvas-title text-accent">Twoje Serwery</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+        @if (Model.Servers != null && Model.Servers.Any())
+        {
+            foreach (var server in Model.Servers)
+            {
+                <div class="history-item" onclick="switchServer('@server.Id')">
+                    <div class="fw-bold">@server.Name</div>
+                    <code class="text-muted small">@server.Url</code>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="p-4 text-center text-muted small">Brak skonfigurowanych serwerów</div>
+        }
+    </div>
+    <div class="p-3 border-top border-secondary">
+        <a href="/Servers" class="btn btn-outline-info btn-sm w-100 rounded-pill">Zarządzaj serwerami</a>
+    </div>
+</div>
+
+<form id="switchServerForm" method="post" action="/EsQuery/SwitchServer" style="display:none;">
+    <input type="hidden" name="serverId" id="switchServerId" />
+</form>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+    <script>
+        let inputEditor;
+        let resultEditor;
+        let codeEditor;
+        const MAX_HISTORY = 15;
+        let confirmModal;
+        let codeModal;
+
+        require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' } });
+
+        require(['vs/editor/editor.main'], function () {
+            inputEditor = monaco.editor.create(document.getElementById('monacoInput'), {
+                value: `@Html.Raw(Model.BodyJson?.Replace("`", "\\`"))` || '{\n  "query": {\n    "match_all": {}\n  }\n}',
+                language: 'json',
+                theme: 'vs-dark',
+                automaticLayout: true,
+                minimap: { enabled: false },
+                fontSize: 14
+            });
+
+            resultEditor = monaco.editor.create(document.getElementById('monacoResult'), {
+                value: '',
+                language: 'json',
+                theme: 'vs-dark',
+                readOnly: true,
+                automaticLayout: true,
+                minimap: { enabled: true },
+                fontSize: 13
+            });
+
+            codeEditor = monaco.editor.create(document.getElementById('monacoCode'), {
+                value: '',
+                language: 'csharp',
+                theme: 'vs-dark',
+                readOnly: true,
+                automaticLayout: true,
+                minimap: { enabled: false },
+                fontSize: 13
+            });
+
+            confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            renderHistory();
+
+            // Load last used index if none selected
+            const lastIndex = localStorage.getItem('es_last_index');
+            const indexInput = document.getElementById('selectIndex');
+            if (!indexInput.value && lastIndex) {
+                indexInput.value = lastIndex;
+            }
+
+            indexInput.addEventListener('change', (e) => {
+                localStorage.setItem('es_last_index', e.target.value);
+            });
+
+            // Handle tab resize for monaco
+            document.getElementById('code-tab').addEventListener('shown.bs.tab', () => {
+                codeEditor.layout();
+            });
+            document.getElementById('json-tab').addEventListener('shown.bs.tab', () => {
+                resultEditor.layout();
+            });
+
+            // Toggle Body based on Method
+            const methodSelect = document.getElementById('selectMethod');
+            const updateBodyState = () => {
+                const isDelete = methodSelect.value === 'DELETE';
+                const container = document.getElementById('monacoInput');
+                if (isDelete) {
+                    container.style.opacity = '0.3';
+                    container.style.pointerEvents = 'none';
+                    inputEditor.updateOptions({ readOnly: true });
+                } else {
+                    container.style.opacity = '1';
+                    container.style.pointerEvents = 'all';
+                    inputEditor.updateOptions({ readOnly: false });
+                }
+            };
+            methodSelect.addEventListener('change', updateBodyState);
+            updateBodyState();
+        });
+
+        function generateCSharpCode() {
+            const index = document.getElementById('selectIndex').value || "index_name";
+            const method = document.getElementById('selectMethod').value;
+            const endpoint = document.getElementById('inputEndpoint').value;
+            const body = inputEditor.getValue();
+            const escapedBody = body.replace(/"/g, '""');
+
+            let code = `// Wymagane using:
+// using Elastic.Clients.Elasticsearch;
+// using Elastic.Clients.Elasticsearch.QueryDsl;
+
+var client = new ElasticsearchClient(new Uri("YOUR_ELASTICSEARCH_URL"));
+
+/* ---------------------------------------------------------
+   OPCJA 1: Raw JSON (SDK 9.4+)
+   Szybkie i niezawodne, gdy masz gotowy JSON z Dashboardu.
+   --------------------------------------------------------- */
+`;
+
+            if (endpoint.includes('_search')) {
+                code += `var responseRaw = await client.SearchAsync<dynamic>(s => s
+    .Index("${index}")
+    .RawJson(@@"${escapedBody}")
+);
+
+/* ---------------------------------------------------------
+   OPCJA 2: Składnia Fluent API (Silnie typowana)
+   Najlepsza dla czystego i skalowalnego kodu produkcyjnego.
+   --------------------------------------------------------- */
+`;
+
+                // Prosty translator JSON -> Fluent API (Best effort)
+                let fluentQuery = ".MatchAll()";
+                let size = 10;
+                let sortCode = "";
+
+                try {
+                    const json = JSON.parse(body);
+                    if (json.size) size = json.size;
+                    
+                    if (json.query) {
+                        if (json.query.match_all) {
+                            fluentQuery = ".MatchAll()";
+                        } 
+                        else if (json.query.match) {
+                            const field = Object.keys(json.query.match)[0];
+                            const val = json.query.match[field];
+                            fluentQuery = `.Match(m => m.Field("${field}").Query("${val}"))`;
+                        }
+                        else if (json.query.multi_match) {
+                            const mm = json.query.multi_match;
+                            const fields = Array.isArray(mm.fields) ? mm.fields.map(f => `"${f}"`).join(', ') : `"${mm.fields}"`;
+                            const typeStr = mm.type ? mm.type.charAt(0).toUpperCase() + mm.type.slice(1).replace(/_([a-z])/g, (g) => g[1].toUpperCase()) : "BestFields";
+                            fluentQuery = `.MultiMatch(mm => mm
+        .Query("${mm.query}")
+        .Fields(new[] { ${fields} })
+        .Type(TextQueryType.${typeStr})
+    )`;
+                        }
+                        else {
+                            fluentQuery = "// Złożone zapytanie - użyj składni .Bool() lub .QueryString()";
+                        }
+                    }
+
+                    if (json.sort) {
+                        sortCode = "\n    .Sort(s => s";
+                        const sorts = Array.isArray(json.sort) ? json.sort : [json.sort];
+                        sorts.forEach(s => {
+                            if (typeof s === 'string') sortCode += `.Field("${s}", f => f.Order(SortOrder.Asc))`;
+                            else {
+                                const field = Object.keys(s)[0];
+                                const order = s[field].order || s[field];
+                                const orderStr = order.charAt(0).toUpperCase() + order.slice(1);
+                                sortCode += `.Field("${field}", f => f.Order(SortOrder.${orderStr}))`;
+                            }
+                        });
+                        sortCode += ")";
+                    }
+                } catch (e) {
+                    fluentQuery = "// Błąd parsowania JSON - sprawdź poprawność formatu";
+                }
+
+                code += `var responseFluent = await client.SearchAsync<Product>(s => s
+    .Index("${index}")
+    .Size(${size})${sortCode}
+    .Query(q => q
+        ${fluentQuery}
+    )
+);
+
+if (responseFluent.IsValidResponse) {
+    foreach (var doc in responseFluent.Documents) {
+        Console.WriteLine(doc);
+    }
+}`;
+            }
+            else {
+                code += `// Zapytanie generyczne (Transport)
+var response = await client.Transport.RequestAsync<dynamic>(
+    HttpMethod.${method}, 
+    "${index}/${endpoint}", 
+    PostData.String(@@"${escapedBody}")
+);`;
+            }
+
+            codeEditor.setValue(code);
+        }
+
+        function copyActiveContent() {
+            const activeTabId = document.querySelector('#resultTabs .active').id;
+            let textToCopy = '';
+            
+            if (activeTabId === 'json-tab') {
+                textToCopy = resultEditor.getValue();
+            } else {
+                textToCopy = codeEditor.getValue();
+            }
+
+            if (!textToCopy) return;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const btn = document.getElementById('copyBtn');
+                const original = btn.innerText;
+                btn.innerText = 'Skopiowano!';
+                setTimeout(() => btn.innerText = original, 2000);
+            });
+        }
+
+        function formatJson() {
+            if (inputEditor) inputEditor.getAction('editor.action.formatDocument').run();
+        }
+
+        function copyResult() {
+            if (resultEditor) {
+                navigator.clipboard.writeText(resultEditor.getValue()).then(() => {
+                    const btn = document.getElementById('copyBtn');
+                    const original = btn.innerText;
+                    btn.innerText = 'Skopiowano!';
+                    setTimeout(() => btn.innerText = original, 2000);
+                });
+            }
+        }
+
+        function handleQuerySubmit() {
+            const method = document.getElementById('selectMethod').value;
+            const endpoint = document.getElementById('inputEndpoint').value.toLowerCase();
+            const dangerousMethods = ['DELETE', 'PUT', 'PATCH'];
+            const dangerousKeywords = ['_bulk', '_delete', '_update', '_reindex', '_security', '_ilm', '_snapshot', '_close'];
+
+            const isDangerousMethod = dangerousMethods.includes(method);
+            const isDangerousEndpoint = dangerousKeywords.some(k => endpoint.includes(k));
+
+            if (isDangerousMethod || isDangerousEndpoint) {
+                document.getElementById('confirmOperationInfo').innerText = `${method} /${endpoint}`;
+                confirmModal.show();
+            } else {
+                executeFinalSubmit();
+            }
+        }
+
+        async function executeFinalSubmit() {
+            confirmModal.hide();
+            
+            const btn = document.getElementById('submitBtn');
+            const spinner = document.getElementById('btnSpinner');
+            const btnText = document.getElementById('btnText');
+            const errorAlert = document.getElementById('errorAlert');
+            const resultContainer = document.getElementById('monacoResult');
+            const emptyResult = document.getElementById('emptyResult');
+            const copyBtn = document.getElementById('copyBtn');
+            const resultMeta = document.getElementById('resultMeta');
+
+            btn.disabled = true;
+            spinner.style.display = 'inline-block';
+            btnText.innerText = 'Wysyłanie...';
+            errorAlert.style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('SelectedIndex', document.getElementById('selectIndex').value);
+            formData.append('HttpMethod', document.getElementById('selectMethod').value);
+            formData.append('Endpoint', document.getElementById('inputEndpoint').value);
+            formData.append('BodyJson', inputEditor.getValue());
+
+            try {
+                const response = await fetch('/EsQuery/Index', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update Meta
+                    const statusEl = document.getElementById('resultStatus');
+                    statusEl.innerText = `HTTP ${data.statusCode} ${data.statusText}`;
+                    statusEl.className = `badge-status ${data.statusCode < 400 ? 'badge-success' : 'badge-error'}`;
+                    
+                    document.getElementById('resultUrl').innerText = data.url;
+                    resultMeta.style.display = 'flex';
+
+                    // Update Editor
+                    resultEditor.setValue(data.result || '');
+                    resultContainer.style.display = 'flex';
+                    
+                    emptyResult.classList.add('d-none');
+                    emptyResult.classList.remove('d-flex');
+
+                    copyBtn.style.display = 'block';
+                    saveToHistory();
+                    renderHistory();
+                    
+                    // Force Monaco to fill new height
+                    setTimeout(() => resultEditor.layout(), 10);
+                } else {
+                    document.getElementById('errorMessage').innerText = data.error;
+                    errorAlert.style.display = 'block';
+                    resultMeta.style.display = 'none';
+                    resultContainer.style.display = 'none';
+                    
+                    emptyResult.classList.remove('d-none');
+                    emptyResult.classList.add('d-flex');
+                }
+            } catch (err) {
+                document.getElementById('errorMessage').innerText = 'Wystąpił błąd podczas komunikacji z serwerem.';
+                errorAlert.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                btnText.innerText = 'Wykonaj Zapytanie';
+            }
+        }
+
+        function setIndex(name) {
+            const indexInput = document.getElementById('selectIndex');
+            indexInput.value = name;
+            localStorage.setItem('es_last_index', name);
+            bootstrap.Offcanvas.getInstance(document.getElementById('indicesOffcanvas')).hide();
+        }
+
+        function switchServer(id) {
+            document.getElementById('switchServerId').value = id;
+            document.getElementById('switchServerForm').submit();
+        }
+
+        function saveToHistory() {
+            const query = {
+                index: document.getElementById('selectIndex').value,
+                method: document.getElementById('selectMethod').value,
+                endpoint: document.getElementById('inputEndpoint').value,
+                body: inputEditor.getValue(),
+                timestamp: new Date().toLocaleString()
+            };
+
+            let history = JSON.parse(localStorage.getItem('es_query_history') || '[]');
+            history.unshift(query);
+            if (history.length > MAX_HISTORY) history.pop();
+            localStorage.setItem('es_query_history', JSON.stringify(history));
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const history = JSON.parse(localStorage.getItem('es_query_history') || '[]');
+            
+            if (history.length === 0) return;
+
+            list.innerHTML = history.map((q, i) => `
+                <div class="history-item" onclick="loadHistory(${i})">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="method-badge bg-info text-dark">${q.method}</span>
+                        <span class="text-muted small">${q.timestamp}</span>
+                    </div>
+                    <div class="fw-bold text-accent truncate">${q.index || '_all'}</div>
+                    <div class="text-muted small truncate">/ ${q.endpoint}</div>
+                </div>
+            `).join('');
+        }
+
+        function loadHistory(index) {
+            const history = JSON.parse(localStorage.getItem('es_query_history') || '[]');
+            const q = history[index];
+            if (!q) return;
+
+            document.getElementById('selectIndex').value = q.index;
+            document.getElementById('selectMethod').value = q.method;
+            document.getElementById('inputEndpoint').value = q.endpoint;
+            inputEditor.setValue(q.body);
+
+            bootstrap.Offcanvas.getInstance(document.getElementById('historyOffcanvas')).hide();
+        }
+
+        function clearHistory() {
+            if (confirm('Czy na pewno wyczyścić historię?')) {
+                localStorage.removeItem('es_query_history');
+                renderHistory();
+            }
+        }
+    </script>
+}

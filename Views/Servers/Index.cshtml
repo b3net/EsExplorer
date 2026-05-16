@@ -1,0 +1,121 @@
+@model EsCheckWeb.Models.ServerListViewModel
+
+@{
+    ViewData["Title"] = "Konfiguracja Serwerów";
+}
+
+<div class="d-flex justify-content-between align-items-end mb-4">
+    <div>
+        <h1 class="mb-1">Zarządzanie <span class="text-gradient">Serwerami</span></h1>
+        <p class="text-muted mb-0">Dodawaj i przełączaj się między klastrami Elasticsearch</p>
+    </div>
+    <a href="/EsCheck" class="btn btn-outline-secondary btn-sm rounded-pill">Powrót do Eksploratora</a>
+</div>
+
+@if (!string.IsNullOrWhiteSpace(Model.Error))
+{
+    <div class="alert badge-error border-0 mb-4">
+        <strong>Błąd:</strong> @Model.Error
+    </div>
+}
+
+<div class="row g-4">
+    <!-- Lista Serwerów -->
+    <div class="col-lg-8">
+        <div class="card-glass h-100">
+            <h3 class="h5 mb-4 text-accent">Zdefiniowane Połączenia</h3>
+            <div class="table-responsive">
+                <table class="table table-dark table-hover border-secondary">
+                    <thead>
+                        <tr>
+                            <th class="border-secondary text-muted small">STATUS</th>
+                            <th class="border-secondary text-muted small">NAZWA</th>
+                            <th class="border-secondary text-muted small">URL</th>
+                            <th class="border-secondary text-muted small">AUTH</th>
+                            <th class="border-secondary text-muted small text-end">AKCJA</th>
+                        </tr>
+                    </thead>
+                    <tbody class="align-middle">
+                        @foreach (var server in Model.Servers)
+                        {
+                            <tr class="@(server.Id == Model.ActiveServerId ? "table-active" : "")">
+                                <td>
+                                    @if (server.Id == Model.ActiveServerId)
+                                    {
+                                        <span class="badge-status badge-success">AKTYWNY</span>
+                                    }
+                                </td>
+                                <td class="fw-bold">@server.Name</td>
+                                <td><code class="text-muted">@server.Url</code></td>
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(server.ApiKey))
+                                    {
+                                        <span class="badge bg-secondary">API Key</span>
+                                    }
+                                    else if (!string.IsNullOrWhiteSpace(server.Username))
+                                    {
+                                        <span class="badge bg-secondary">Basic Auth</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">Brak</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    <form method="post" action="/Servers/Select">
+                                        <input type="hidden" name="serverId" value="@server.Id" />
+                                        <button type="submit" class="btn @(server.Id == Model.ActiveServerId ? "btn-light disabled" : "btn-outline-light") btn-sm rounded-pill">
+                                            @(server.Id == Model.ActiveServerId ? "Wybrany" : "Wybierz")
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dodaj Nowy -->
+    <div class="col-lg-4">
+        <div class="card-glass h-100">
+            <h3 class="h5 mb-4 text-accent">Dodaj Nowy Serwer</h3>
+            <form method="post" action="/Servers/Add" class="row g-3">
+                <div class="col-12">
+                    <label>ID Serwera</label>
+                    <input name="NewServer.Id" class="form-control" placeholder="np. prod-cluster" required />
+                </div>
+
+                <div class="col-12">
+                    <label>Przyjazna Nazwa</label>
+                    <input name="NewServer.Name" class="form-control" placeholder="np. Produkcja (Główna)" required />
+                </div>
+
+                <div class="col-12">
+                    <label>URL Klastra</label>
+                    <input name="NewServer.Url" class="form-control" placeholder="https://localhost:9200" required />
+                </div>
+
+                <div class="col-12">
+                    <label>Użytkownik (opcjonalnie)</label>
+                    <input name="NewServer.Username" class="form-control" />
+                </div>
+
+                <div class="col-6">
+                    <label>Hasło</label>
+                    <input name="NewServer.Password" type="password" class="form-control" />
+                </div>
+
+                <div class="col-6">
+                    <label>API Key</label>
+                    <input name="NewServer.ApiKey" type="password" class="form-control" />
+                </div>
+
+                <div class="col-12 mt-4">
+                    <button type="submit" class="btn-premium w-100">Zapisz Serwer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

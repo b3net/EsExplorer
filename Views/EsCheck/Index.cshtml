@@ -1,0 +1,166 @@
+@model EsCheckWeb.Models.EsCheckViewModel
+
+@{
+    ViewData["Title"] = "Status Klastra";
+}
+
+@section Styles {
+    <style>
+        .editor-container {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            background: #1e1e1e;
+        }
+    </style>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="mb-1">Eksplorator <span class="text-gradient">Klastrów</span></h1>
+        <p class="text-muted mb-0">Podgląd statusu i struktury indeksów</p>
+    </div>
+    <div class="text-end">
+        <div class="text-accent fw-bold small text-uppercase">Aktywny Serwer</div>
+        <div class="h5 mb-0">@Model.ActiveServerName</div>
+        <code class="text-muted small">@Model.ActiveServerUrl</code>
+    </div>
+</div>
+
+@if (!Model.Success)
+{
+    <div class="alert badge-error border-0 p-4">
+        <h4 class="h5">Błąd połączenia</h4>
+        <p class="mb-0">@Model.Error</p>
+        <a href="/Servers" class="btn btn-outline-danger btn-sm mt-3">Skonfiguruj serwer</a>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        <!-- Cluster Info Card -->
+        <div class="col-md-4">
+            <div class="card-glass h-100">
+                <h3 class="h5 mb-4 text-accent">Informacje o klastrze</h3>
+                <div class="mb-3">
+                    <label>Cluster Name</label>
+                    <div class="h6">@Model.ClusterName</div>
+                </div>
+                <div>
+                    <label>Version</label>
+                    <div class="h6">@Model.Version</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Index Selector Card -->
+        <div class="col-md-8">
+            <div class="card-glass h-100">
+                <h3 class="h5 mb-4 text-accent">Wybierz Indeks</h3>
+                <form method="get" class="row g-2">
+                    <div class="col-grow">
+                        <select name="indexName" class="form-select">
+                            <option value="">-- wybierz indeks z listy --</option>
+                            @foreach (var index in Model.Indices)
+                            {
+                                <option value="@index" selected="@(index == Model.SelectedIndex)">@index</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn-premium">Sprawdź</button>
+                    </div>
+                </form>
+
+                <div class="mt-4 pt-3 border-top border-secondary opacity-75">
+                    <label>Wszystkie indeksy (@Model.Indices.Count)</label>
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                        @foreach (var index in Model.Indices)
+                        {
+                            <a href="/EsCheck?indexName=@index" 
+                               class="btn btn-sm @(index == Model.SelectedIndex ? "btn-primary" : "btn-outline-secondary") rounded-pill">
+                                @index
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.SelectedIndex))
+        {
+            <!-- Mapping & Sample Data -->
+            <div class="col-12">
+                <div class="card-glass">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="h4 mb-0"><span class="text-accent">Szczegóły:</span> @Model.SelectedIndex</h2>
+                        <div class="badge-status badge-success">Aktywny</div>
+                    </div>
+
+                    <ul class="nav nav-tabs border-0 gap-2 mb-4" id="detailsTab" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active rounded-pill px-4 border-0" id="mapping-tab" data-bs-toggle="tab" data-bs-target="#mapping" type="button">Mapping</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link rounded-pill px-4 border-0" id="sample-tab" data-bs-toggle="tab" data-bs-target="#sample" type="button">Przykładowy Dokument</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="mapping">
+                            <div id="monacoMapping" class="editor-container" style="height: 500px;"></div>
+                            <div id="rawMapping" style="display:none;">@Model.MappingJson</div>
+                        </div>
+                        <div class="tab-pane fade" id="sample">
+                            <div id="monacoSample" class="editor-container" style="height: 500px;"></div>
+                            <div id="rawSample" style="display:none;">@Model.SampleDocumentJson</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+    <script>
+        require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' } });
+
+        require(['vs/editor/editor.main'], function () {
+            const commonConfig = {
+                language: 'json',
+                theme: 'vs-dark',
+                readOnly: true,
+                automaticLayout: true,
+                minimap: { enabled: true },
+                fontSize: 13,
+                scrollBeyondLastLine: false
+            };
+
+            const mappingRaw = document.getElementById('rawMapping');
+            if (mappingRaw) {
+                monaco.editor.create(document.getElementById('monacoMapping'), {
+                    ...commonConfig,
+                    value: mappingRaw.innerText
+                });
+            }
+
+            const sampleRaw = document.getElementById('rawSample');
+            if (sampleRaw) {
+                monaco.editor.create(document.getElementById('monacoSample'), {
+                    ...commonConfig,
+                    value: sampleRaw.innerText
+                });
+            }
+            
+            // Fix layout on tab switch
+            document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tabEl => {
+                tabEl.addEventListener('shown.bs.tab', () => {
+                    window.dispatchEvent(new Event('resize'));
+                });
+            });
+        });
+    </script>
+}
+

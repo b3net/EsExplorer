@@ -1,0 +1,18 @@
+{
+  "size": 5,
+  "_source": ["name", "category", "catalogIndex", "price"],
+  "query": {
+    "multi_match": {
+      "query": "home wireless HO-909",
+      "fields": [
+        "name^4",
+        "description^0.5",
+        "category.text^3",
+        "catalogIndex.ngram^5"
+      ],
+      "type": "most_fields",
+      "operator": "or"
+    }
+  },
+  "sort": ["_score", { "price": "asc" }]
+}

@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11723.189 insiders
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EsCheckWeb", "EsCheckWeb.csproj", "{822BD4F7-9DCD-283B-A202-C5FC37C2239B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{822BD4F7-9DCD-283B-A202-C5FC37C2239B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{822BD4F7-9DCD-283B-A202-C5FC37C2239B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{822BD4F7-9DCD-283B-A202-C5FC37C2239B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{822BD4F7-9DCD-283B-A202-C5FC37C2239B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E1D8E618-0F20-433E-9A16-06F3D436A818}
+	EndGlobalSection
+EndGlobal
