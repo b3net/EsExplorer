@@ -45,7 +45,6 @@ secrets.json
 
 ## Frontend i pakiety klienckie (NPM / LibMan)
 node_modules/
-/wwwroot/lib/
 .sass-cache/
 .bower_components/
 
